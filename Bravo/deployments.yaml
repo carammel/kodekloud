@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: drupal
+spec:
+  selector:
+    matchLabels:
+      app: drupal
+  template:
+    metadata:
+      labels:
+        app: drupal
+    spec:
+      volumes:
+        - name: vol
+          hostPath:
+            path: "/var/www/html/"
+        - name: data
+          hostPath:
+            path: "/data"
+      containers:
+      - name: drupal
+        image: drupal:8.6
+        resources:
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+        ports:
+        - containerPort: 80
+        volumeMounts:
+          - name: vol
+            mountPath: /modules
+          - name: vol
+            mountPath: /profiles"
+          - name: vol
+            mountPath: /sites
+          - name: vol
+            mountPath: /themes
+      initContainers:
+        - name: init-sites-volume
+          image: drupal:8.6
+          command: ["/bin/bash", "-c" ]
+          args: ['cp -r /var/www/html/sites/ /data/; chown www-data:www-data /data/ -R' ]
+          volumeMounts:
+            - name: data
+              mountPath: /data
