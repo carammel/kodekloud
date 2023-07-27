@@ -1,0 +1,10 @@
+kubectl apply -f csr.yaml
+kubectl get csr
+kubectl config view #Check kube-config file
+kubectl config set-context developer --user=martin --cluster=kubernetes  #Create a new context called 'developer' in the default kubeconfig file with 'user = martin' and 'cluster = kubernetes'
+kubectl config set-credentials mart --client-key=martin.key --client-certificate=martin.crt --embed-certs=false #Build user information for martin in the default kubeconfig file: User = martin , client-key = /root/martin.key and client-certificate = /root/martin.crt (Ensure don't embed within the kubeconfig file)
+kubectl create role developer-role --verb=create --verb=* --resource=services,persistentvolumeclaims,pods -n development
+kubectl create rolebinding developer-rolebinding --role=developer-role --user=martin -n development
+kubectl config set-context developer --user=martin --cluster=kubernetes #set context 'developer' with user = 'martin' and cluster = 'kubernetes' 
+kubectl config use-context developer #set as the current context.
+kubectl config set-credentials <username> --client-certificate=<path-to-cert> --client-key=<path-to-key> --embed-certs=true
